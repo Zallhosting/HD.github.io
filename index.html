@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="zallkaltim" content="width=device-width, initial-scale=1.0">
-    <title>Video HD Sederhana</title>
+    <title>Video HD Upload dan Galeri</title>
     <style>
         /* Reset margin dan padding */
         * {
@@ -48,7 +48,46 @@
             height: auto;
         }
 
-        /* Tombol unduh */
+        /* Tombol upload */
+        .upload-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #FF0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        input[type="file"]:hover {
+            background-color: #d50000;
+        }
+
+        /* Galeri Video */
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .video-thumbnail {
+            margin: 10px;
+            width: 200px;
+            height: 120px;
+            background-color: #333;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+        }
+
+        .video-thumbnail video {
+            width: 100%;
+            height: 100%;
+        }
+
         .download-button {
             display: inline-block;
             padding: 10px 20px;
@@ -64,34 +103,78 @@
             background-color: #d50000; /* Warna merah lebih gelap saat hover */
         }
 
-        /* Footer */
-        footer {
-            margin-top: 40px;
-            font-size: 14px;
-            color: #aaa;
-        }
     </style>
 </head>
 <body>
 
-    <h1>Selamat datang di Website Video HD!</h1>
-    <p>Menonton dan mengunduh video berkualitas tinggi.</p>
+    <h1>Website Upload dan Galeri Video HD</h1>
+    <p>Upload video Anda dan lihat galeri video yang sudah diupload.</p>
 
-    <!-- Container untuk video -->
+    <!-- Container untuk video utama -->
     <div class="video-container">
-        <video controls>
-            <source src="video-anda.mp4" type="video/mp4">
+        <video id="mainVideo" controls>
+            <source id="mainVideoSource" src="" type="video/mp4">
             Browser Anda tidak mendukung tag video.
         </video>
     </div>
 
-    <!-- Tombol unduh video -->
-    <a href="video-anda.mp4" download class="download-button">Unduh Video</a>
+    <!-- Fitur upload video -->
+    <div class="upload-container">
+        <input type="file" id="videoUpload" accept="video/mp4" onchange="handleVideoUpload(event)">
+        <p>Upload Video HD</p>
+    </div>
 
-    <!-- Footer -->
+    <!-- Galeri untuk menampilkan video yang sudah diupload -->
+    <div class="gallery" id="gallery"></div>
+
     <footer>
-        <p>&copy; 2024 Video HD Sederhana</p>
+        <p>&copy; 2024 Video HD Upload dan Galeri</p>
     </footer>
+
+    <script>
+        // Fungsi untuk menangani upload video
+        function handleVideoUpload(event) {
+            const file = event.target.files[0];
+
+            if (file && file.type === 'video/mp4') {
+                const videoURL = URL.createObjectURL(file);
+
+                // Menampilkan video utama setelah diupload
+                document.getElementById('mainVideoSource').src = videoURL;
+                document.getElementById('mainVideo').load();
+                
+                // Menambahkan video ke galeri
+                addVideoToGallery(videoURL, file.name);
+            } else {
+                alert('Silakan pilih file video MP4.');
+            }
+        }
+
+        // Fungsi untuk menambah video ke galeri
+        function addVideoToGallery(videoURL, videoName) {
+            const gallery = document.getElementById('gallery');
+            const videoContainer = document.createElement('div');
+            videoContainer.classList.add('video-thumbnail');
+
+            const videoElement = document.createElement('video');
+            videoElement.src = videoURL;
+            videoElement.controls = true;
+            videoElement.addEventListener('click', function() {
+                document.getElementById('mainVideoSource').src = videoURL;
+                document.getElementById('mainVideo').load();
+            });
+
+            const downloadButton = document.createElement('a');
+            downloadButton.href = videoURL;
+            downloadButton.download = videoName;
+            downloadButton.textContent = 'Unduh Video';
+            downloadButton.classList.add('download-button');
+
+            videoContainer.appendChild(videoElement);
+            videoContainer.appendChild(downloadButton);
+            gallery.appendChild(videoContainer);
+        }
+    </script>
 
 </body>
 </html>
